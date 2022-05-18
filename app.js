@@ -1,4 +1,5 @@
 const express = require('express')
+const path = require('path')
 const dotenv = require('dotenv')
 const connectDB= require('./config/db')
 const exphbs = require('express-handlebars')
@@ -15,6 +16,9 @@ connectDB()
 app.engine('.hbs', exphbs.engine({extname: '.hbs', defaultLayout:`main`}));
 app.set('view engine', '.hbs');
 app.set('views', './views');
+
+//static folder
+app.use(express.static(path.join(__dirname, 'public')))
 
 //routes
 app.use('/', require ('./routes/index'))
