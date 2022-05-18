@@ -10,7 +10,29 @@ module.exports = function (passport) {
                 callbackURL: '/auth/google/callback',
             },
             async (accessToken, refreshToken, profile, done) => {
-                console.log(profile)
+                const newUser = {
+                    googleId: profile.id,
+                    displayName: profile.displayName,
+                    firstName: profile.name.givenName,
+                    lastName: profile.name.familyName,
+                    image: profile.photos[0].value,
+                }
+
+                try {
+                    //if already have user so done(null,user). if new user, add him to DB and call done(null,user)
+                    let user = await User.findOne({
+                        googleId: profile.id
+                    })
+
+                    if (user) {
+                        done(null, user)
+                    } else {
+                        user = await User.create(newUser)
+                        done(null, user)
+                    }
+                } catch (err) {
+                    console.error(err)
+                }
             }
         )
     )
