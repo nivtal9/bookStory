@@ -48,6 +48,10 @@ app.use(passport.session())
 //static folder
 app.use(express.static(path.join(__dirname, 'public')))
 
+// Body parser (accept the stories after post request from stories/add)
+app.use(express.urlencoded({ extended: false }))
+app.use(express.json())
+
 //routes
 app.use('/', require('./routes/index'))
 app.use('/auth', require('./routes/auth'))

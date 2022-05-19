@@ -18,14 +18,20 @@
     <div class="container">
         {{{body}}}
     </div>
-
+    {{!-- materialize insert --}}
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    {{!-- ckeditor that adding edit tools to the "Tell Us Your Story:" box in stories/add --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ckeditor/4.14.1/ckeditor.js"
+        integrity="sha256-bEIQpI72w9NJuIVhTLFUF2/8uxl0u5800r8ddViuv+o=" crossorigin="anonymous"></script>
 
+    {{!-- initialzation the navigation bar and the add story form to work --}}
+    {{!-- CKEDITOR will replace textarea element in add.hbs in line 24 --}}
     <script>
-        '{{!--  --}}'
         M.Sidenav.init(document.querySelector('.sidenav'))
-        '{{!--  --}}'
         M.FormSelect.init(document.querySelector('#status'))
+        if (window.location.href.endsWith('stories/add')) {
+            CKEDITOR.replace('body')
+        }
     </script>
 </body>
 
