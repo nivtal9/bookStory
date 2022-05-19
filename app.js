@@ -21,10 +21,14 @@ require('./config/passport')(passport);
 
 connectDB()
 
+// hbs Helpers
+const {formatDate} = require('./helpers/hbs')
+
 // viewes and hbs
 app.engine('.hbs', exphbs.engine({
   extname: '.hbs',
-  defaultLayout: `main`
+  defaultLayout: `main`,
+  helpers: { formatDate }
 }));
 app.set('view engine', '.hbs');
 app.set('views', './views');
