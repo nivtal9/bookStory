@@ -1,16 +1,20 @@
 const express = require('express')
 const path = require('path')
+const mongoose = require('mongoose')
 const dotenv = require('dotenv')
-const connectDB= require('./config/db')
+const connectDB = require('./config/db')
 const exphbs = require('express-handlebars')
 const passport = require('passport')
 const session = require('express-session')
-const PORT = process.env.PORT||3000
+const MongoStore = require('connect-mongo')
+const PORT = process.env.PORT || 3000
 
-const app=express()
+const app = express()
 
 //environment configuration
-dotenv.config({path: './config/config.env'})
+dotenv.config({
+  path: './config/config.env'
+})
 
 //passport configuration 
 require('./config/passport')(passport);
@@ -18,16 +22,24 @@ require('./config/passport')(passport);
 connectDB()
 
 // viewes and hbs
-app.engine('.hbs', exphbs.engine({extname: '.hbs', defaultLayout:`main`}));
+app.engine('.hbs', exphbs.engine({
+  extname: '.hbs',
+  defaultLayout: `main`
+}));
 app.set('view engine', '.hbs');
 app.set('views', './views');
 
 //sessions : https://www.npmjs.com/package/express-session
-app.use(session({
+//store: is for saving sessions in mongoDB 
+//(if server refreshing the user gets to the login page when he use already logged in)
+app.use(
+  session({
     secret: 'keyboard cat',
     resave: false,
     saveUninitialized: false,
-  }))
+    store: MongoStore.create({mongoUrl: process.env.MONGO_URI,}),
+  })
+)
 
 //passport middleware
 app.use(passport.initialize())
@@ -37,11 +49,11 @@ app.use(passport.session())
 app.use(express.static(path.join(__dirname, 'public')))
 
 //routes
-app.use('/', require ('./routes/index'))
-app.use('/auth', require ('./routes/auth'))
+app.use('/', require('./routes/index'))
+app.use('/auth', require('./routes/auth'))
 
-app.get('/', (req,res) =>{
-    res.send('hello world')
+app.get('/', (req, res) => {
+  res.send('hello world')
 })
 
-app.listen(PORT) 
+app.listen(PORT)
