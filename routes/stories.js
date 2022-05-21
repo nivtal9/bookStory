@@ -4,11 +4,11 @@ const {ensureAuth}  =require('../middleware/auth')
 const Story = require('../models/Story')
 
 router.use(ensureAuth)
-
+//show add story page
 router.get('/add', (req,res)=>{
     res.render('stories/add')
 })
-
+//get the story and insert into DB and redirect to /dashboard
 router.post('/', async (req, res) => {
     try {
       req.body.user = req.user.id
@@ -18,7 +18,7 @@ router.post('/', async (req, res) => {
       console.error(err)
     }
   })
-
+  //show public stories page
   router.get('/', async (req, res) => {
     try {
       const stories = await Story.find({ status: 'public' }).populate('user').sort({ createdAt: 'desc' }).lean()
@@ -29,7 +29,7 @@ router.post('/', async (req, res) => {
       console.error(err)
     }
   })
-
+  //show edit page according to storyid
   router.get('/edit/:id', async (req, res) => {
     try {
       const story = await Story.findOne({
@@ -39,7 +39,8 @@ router.post('/', async (req, res) => {
       if (!story) {
         return res.send('Story wasent found')
       }
-  
+
+      //checking if someone unautherized is trying to manipulate
       if (story.user != req.user.id) {
         res.redirect('/stories')
       } else {
@@ -49,11 +50,32 @@ router.post('/', async (req, res) => {
       }
     } catch (err) {
       console.error(err)
-      return res.render('error/500')
+    }
+  })
+  //showing single story (read more) page
+  router.get('/:id', ensureAuth, async (req, res) => {
+    try {
+      let story = await Story.findById(req.params.id).populate('user').lean()
+  
+      if (!story) {
+        return res.send('Story wasent found')
+      }
+
+      //checking if someone unautherized is trying to manipulate to see private story
+      if (story.user._id != req.user.id && story.status == 'private') {
+        return res.send('Story wasent found')
+      } else {
+        res.render('stories/show', {
+          story,
+        })
+      }
+    } catch (err) {
+      console.error(err)
     }
   })
 
-  router.put('/:id', ensureAuth, async (req, res) => {
+  //get the updated story and insert into DB and redirect to /dashboard
+  router.put('/:id', async (req, res) => {
     try {
       let story = await Story.findById(req.params.id).lean()
   
@@ -61,6 +83,7 @@ router.post('/', async (req, res) => {
         return res.send('Story wasent found')
       }
   
+      //checking if someone unautherized is trying to manipulate
       if (story.user != req.user.id) {
         res.redirect('/stories')
       } else {
@@ -75,5 +98,25 @@ router.post('/', async (req, res) => {
       console.error(err)
     }
   })  
+  //delete a story
+  router.delete('/:id', async (req, res) => {
+    try {
+      let story = await Story.findById(req.params.id).lean()
   
+      if (!story) {
+        return res.send('Story wasent found')
+      }
+
+      //checking if someone unautherized is trying to manipulate
+      if (story.user != req.user.id) {
+        res.redirect('/stories')
+      } else {
+        await Story.deleteOne({ _id: req.params.id })
+        res.redirect('/dashboard')
+      }
+    } catch (err) {
+      console.error(err)
+    }
+  })
+
 module.exports = router
