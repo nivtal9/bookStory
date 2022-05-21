@@ -29,7 +29,7 @@
     <script>
         M.Sidenav.init(document.querySelector('.sidenav'))
         M.FormSelect.init(document.querySelector('#status'))
-        if (window.location.href.endsWith('stories/add')) {
+        if (window.location.href.endsWith('stories/add') || window.location.href.includes('edit')) {
             CKEDITOR.replace('body')
         }
     </script>
