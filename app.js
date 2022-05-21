@@ -21,13 +21,13 @@ require('./config/passport')(passport);
 connectDB()
 
 // hbs Helpers
-const {formatDate} = require('./helpers/hbs')
+const {formatDate, truncate, stripTags, editIcon} = require('./helpers/hbs')
 
 // viewes and hbs
 app.engine('.hbs', exphbs.engine({
   extname: '.hbs',
   defaultLayout: `main`,
-  helpers: { formatDate }
+  helpers: { formatDate, truncate, stripTags, editIcon }
 }));
 app.set('view engine', '.hbs');
 app.set('views', './views');
@@ -47,6 +47,12 @@ app.use(
 //passport middleware
 app.use(passport.initialize())
 app.use(passport.session())
+
+// Set global var (also middleware)
+app.use(function (req, res, next) {
+  res.locals.user = req.user || null
+  next()
+})
 
 //static folder
 app.use(express.static(path.join(__dirname, 'public')))

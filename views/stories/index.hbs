@@ -4,14 +4,15 @@
     <div class="col s12 m4">
         <div class="card">
             <div class="card-image">
-                {{!-- {{{editIcon user ../user _id}}} --}}
+                {{!-- '../user' is the logged in user, we're initliatizing global user in app.js because we are in
+                stories loop and 'user' is the user that created the story. _id is story ID --}}
+                {{{editIcon user ../user _id}}}
             </div>
             <div class="card-content center-align">
                 <h5>{{title}}</h5>
-                {{!-- <p>{{stripTags (truncate body 150)}}</p> --}}
+                <p>{{stripTags (truncate body 150)}}</p>
                 <br>
                 <div class="chip">
-                    <script>console.log({{ user.image }}); console.log('im here')</script>
                     <img src="{{user.image}}" alt="">
                     <a href="/stories/user/{{user._id}}">{{user.displayName}}</a>
                 </div>
