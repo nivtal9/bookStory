@@ -8,7 +8,6 @@ const passport = require('passport')
 const session = require('express-session')
 const MongoStore = require('connect-mongo')
 const PORT = process.env.PORT || 3000
-
 const app = express()
 
 //environment configuration

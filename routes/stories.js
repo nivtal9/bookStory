@@ -19,4 +19,14 @@ router.post('/', async (req, res) => {
     }
   })
 
+  router.get('/', async (req, res) => {
+    try {
+      const stories = await Story.find({ status: 'public' }).populate('user').sort({ createdAt: 'desc' }).lean()
+      res.render('stories/index', {
+        stories
+      })
+    } catch (err) {
+      console.error(err)
+    }
+  })
 module.exports = router

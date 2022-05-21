@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+
 const StorySchema = new mongoose.Schema({
   title: {
     type: String,
@@ -17,12 +18,12 @@ const StorySchema = new mongoose.Schema({
   //user type is Object type from mongoDB and that type will be the 'ref' which is 'User'
   user: {
     type: mongoose.Schema.Types.ObjectId,
-    required: true,
+    ref:'User',
   },
   createdAt: {
     type: Date,
-    default: Date.now,
-  },
+    default: Date.now
+  }
 })
 
 module.exports = mongoose.model('Story', StorySchema)
