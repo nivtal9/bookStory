@@ -119,4 +119,22 @@ router.post('/', async (req, res) => {
     }
   })
 
+  //show "more from 'user'" page
+  router.get('/user/:userId', async (req, res) => {
+    try {
+      const stories = await Story.find({
+        user: req.params.userId,
+        status: 'public',
+      })
+        .populate('user')
+        .lean()
+  
+      res.render('stories/index', {
+        stories,
+      })
+    } catch (err) {
+      console.error(err)
+    }
+  })
+
 module.exports = router
